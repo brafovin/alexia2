@@ -51,6 +51,9 @@ attack, cooldown, and ultimate. Play the matchup.
 - **Shrieker** — ranged, spits `TUNG` word-projectiles.
 - **Sprinter** — fast, low HP.
 - **Mallet** — heavy, knockback on hit.
+- **Emo Tung** — dark charcoal log with a swoopy side-bang and a cracked
+  heart pendant. Keeps medium distance, sighs a 3-tear heartbreak fan at
+  you, and bursts into a radial tear ring on death. Debuts on wave 3.
 - **Mallet King** — mini-boss on waves 5 & 10.
 - **Tung Tung Supreme** — final boss on wave 15, three phases.
 

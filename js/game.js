@@ -471,6 +471,24 @@ export class Game {
         this.pickups.push(new Pickup({ x: en.x, y: en.y, kind: "heart", value: 30 }));
         this.pickups.push(new Pickup({ x: en.x + 20, y: en.y, kind: "magnet", value: 1 }));
       }
+      if (en.def && en.def.emo) {
+        // Parting heartbreak — 6 slow tears outward
+        for (let i = 0; i < 6; i++) {
+          const a = (i / 6) * Math.PI * 2 + Math.random() * 0.2;
+          const spd = 130;
+          this.enemyProjectiles.push(new Projectile({
+            x: en.x, y: en.y,
+            vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+            dmg: en.dmg * 0.5,
+            radius: 7,
+            life: 1.6,
+            color: "#c89cff",
+            trailColor: "#ff3ea5",
+            friendly: false,
+            kind: "tear",
+          }));
+        }
+      }
       this.floater(en.x, en.y - 10, "-" + Math.round(amount), "#ffe55c", 12);
     } else {
       this.floater(en.x, en.y - 10, "-" + Math.round(amount), "#ff8ed0", 11);

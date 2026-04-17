@@ -276,6 +276,7 @@ function drawWeaponIcon(ctx, girl, t) {
 
 // ----- Evil Tung Tung sprite -----
 export function drawTungTung(ctx, e, t, opts = {}) {
+  if (e.def && e.def.emo) { drawEmoTungTung(ctx, e, t, opts); return; }
   const d = e.def || {};
   const r = e.radius || 16;
   const bob = Math.sin(t * 6 + e.wobble) * (d.bob || 4);
@@ -393,6 +394,161 @@ export function drawTungTung(ctx, e, t, opts = {}) {
     ctx.fillRect(e.x - bw / 2, e.y - r - 14, bw, bh);
     ctx.fillStyle = "#ff4d6d";
     ctx.fillRect(e.x - bw / 2, e.y - r - 14, bw * (e.hp / e.maxHp), bh);
+  }
+}
+
+// ----- Emo Tung Tung sprite -----
+function drawEmoTungTung(ctx, e, t, opts = {}) {
+  const d = e.def;
+  const r = e.radius;
+  const bob = Math.sin(t * 3.5 + e.wobble) * (d.bob || 4);
+  const sway = Math.sin(t * 2 + e.wobble) * 0.04;
+
+  ctx.save();
+  ctx.translate(e.x, e.y + bob);
+  ctx.rotate(sway);
+
+  // long dark shadow (emo)
+  ctx.fillStyle = "rgba(0,0,0,0.5)";
+  ctx.beginPath();
+  ctx.ellipse(0, r + 7, r * 1.1, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // aura — soft pink sigh pulse
+  const pulse = 0.5 + 0.5 * Math.sin(t * 2.5 + e.wobble);
+  ctx.strokeStyle = `rgba(255, 62, 165, ${(0.12 + pulse * 0.15).toFixed(3)})`;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, r + 6 + pulse * 4, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // body — dark charcoal / purple log
+  const w = r * 1.5, h = r * 1.9;
+  ctx.fillStyle = d.color;
+  roundRect(ctx, -w, -h, w * 2, h * 2, 6);
+  ctx.fill();
+  // grain
+  ctx.strokeStyle = d.dark;
+  ctx.lineWidth = 1;
+  for (let i = -1; i <= 1; i++) {
+    ctx.beginPath();
+    ctx.moveTo(-w + 4, i * 6);
+    ctx.bezierCurveTo(-w / 2, i * 6 + 2, w / 2, i * 6 - 2, w - 4, i * 6);
+    ctx.stroke();
+  }
+  // ring ends
+  ctx.fillStyle = d.dark;
+  ctx.fillRect(-w, -h, w * 2, 3);
+  ctx.fillRect(-w, h - 3, w * 2, 3);
+
+  // stubby legs in striped stockings (scene/emo touch)
+  ctx.fillStyle = "#0a0410";
+  ctx.fillRect(-w * 0.6, h, 4, 7);
+  ctx.fillRect(w * 0.6 - 4, h, 4, 7);
+  ctx.strokeStyle = "#ff3ea5";
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath(); ctx.moveTo(-w * 0.6, h + 2 + i * 2); ctx.lineTo(-w * 0.6 + 4, h + 2 + i * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w * 0.6 - 4, h + 2 + i * 2); ctx.lineTo(w * 0.6, h + 2 + i * 2); ctx.stroke();
+  }
+
+  // chain choker
+  ctx.strokeStyle = "#9fa3b0";
+  ctx.lineWidth = 1.4;
+  for (let i = -6; i <= 6; i += 3) {
+    ctx.beginPath();
+    ctx.arc(i, -h - 1, 1.6, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  // pendant — broken heart
+  ctx.fillStyle = "#ff3ea5";
+  ctx.beginPath();
+  ctx.moveTo(0, -h + 4);
+  ctx.bezierCurveTo(5, -h - 2, 5, -h - 7, 0, -h - 3);
+  ctx.bezierCurveTo(-5, -h - 7, -5, -h - 2, 0, -h + 4);
+  ctx.fill();
+  // crack through heart
+  ctx.strokeStyle = "#0a0003";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-1, -h - 6);
+  ctx.lineTo(1, -h - 4);
+  ctx.lineTo(-1, -h - 2);
+  ctx.lineTo(1, -h);
+  ctx.lineTo(0, -h + 3);
+  ctx.stroke();
+
+  // face — one eye visible, other covered by swoopy bang
+  // visible eye (glowing pink, with drippy eyeliner underneath)
+  ctx.fillStyle = d.tint;
+  ctx.beginPath();
+  ctx.arc(5, -1, 2.2, 0, Math.PI * 2);
+  ctx.fill();
+  // small white glint
+  ctx.fillStyle = "#fff";
+  ctx.beginPath(); ctx.arc(5.6, -1.6, 0.7, 0, Math.PI * 2); ctx.fill();
+  // eyeliner drip
+  ctx.strokeStyle = "#0a0003";
+  ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.moveTo(4.5, 2);
+  ctx.lineTo(4.2, 5);
+  ctx.moveTo(6, 2);
+  ctx.lineTo(6.3, 4.5);
+  ctx.stroke();
+
+  // swoopy side-bang covering left eye
+  ctx.fillStyle = "#0a0410";
+  ctx.beginPath();
+  ctx.moveTo(-w * 0.9, -h + 2);
+  ctx.bezierCurveTo(-w * 0.5, -h - 2, -2, -h + 8, 3, -h + 10);
+  ctx.bezierCurveTo(0, -2, -6, 0, -12, 2);
+  ctx.bezierCurveTo(-10, -4, -w * 0.9, -h + 6, -w * 0.9, -h + 2);
+  ctx.closePath();
+  ctx.fill();
+  // magenta streak in bang
+  ctx.fillStyle = "#ff3ea5";
+  ctx.fillRect(-8, -h + 5, 2, 10);
+  ctx.fillStyle = "#c89cff";
+  ctx.fillRect(-4, -h + 7, 1.5, 9);
+
+  // downturned mouth with one fang
+  ctx.fillStyle = "#0a0003";
+  ctx.fillRect(-5, 5, 10, 3);
+  ctx.fillStyle = "#fff2d0";
+  ctx.beginPath();
+  ctx.moveTo(-2, 5);
+  ctx.lineTo(-1, 9);
+  ctx.lineTo(0, 5);
+  ctx.closePath();
+  ctx.fill();
+  // frown corners
+  ctx.strokeStyle = "#0a0003";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-6, 4);
+  ctx.lineTo(-5, 6);
+  ctx.moveTo(6, 4);
+  ctx.lineTo(5, 6);
+  ctx.stroke();
+
+  // flash on damage
+  if (e.flash > 0) {
+    ctx.globalAlpha = Math.min(1, e.flash * 6);
+    ctx.fillStyle = "#ffffff";
+    roundRect(ctx, -w, -h, w * 2, h * 2, 6);
+    ctx.fill();
+  }
+
+  ctx.restore();
+
+  // HP bar for bigger/wounded emo
+  if (e.hp < e.maxHp) {
+    const bw = 32, bh = 3;
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(e.x - bw / 2, e.y - r - 12, bw, bh);
+    ctx.fillStyle = "#ff3ea5";
+    ctx.fillRect(e.x - bw / 2, e.y - r - 12, bw * (e.hp / e.maxHp), bh);
   }
 }
 
@@ -543,6 +699,25 @@ export function drawProjectile(ctx, p, t) {
     ctx.lineWidth = 2;
     ctx.strokeText("TUNG", 0, 0);
     ctx.fillText("TUNG", 0, 0);
+  } else if (p.kind === "tear") {
+    // Orient point-up against velocity direction so tears look like tears.
+    const vang = Math.atan2(p.vy, p.vx) - Math.PI / 2;
+    ctx.rotate(vang);
+    ctx.shadowBlur = 8;
+    ctx.shadowColor = p.color;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.moveTo(0, -p.radius * 1.4);
+    ctx.bezierCurveTo(p.radius, -p.radius * 0.3, p.radius, p.radius, 0, p.radius);
+    ctx.bezierCurveTo(-p.radius, p.radius, -p.radius, -p.radius * 0.3, 0, -p.radius * 1.4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    // little glint
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.beginPath();
+    ctx.ellipse(-p.radius * 0.3, -p.radius * 0.2, 1.2, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
   } else {
     ctx.fillStyle = p.color;
     ctx.beginPath();

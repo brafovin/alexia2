@@ -41,6 +41,15 @@ export const ENEMY_TYPES = {
     knockback: 400,
     crown: true,
   },
+  emoTung: {
+    name: "emo tung",
+    hp: 40, speed: 62, radius: 17, dmg: 12, xp: 3,
+    color: "#2a1c36", dark: "#140a20", tint: "#ff3ea5",
+    bob: 4, faceScale: 1.1,
+    emo: true,
+    fireInterval: 2.4,
+    preferredDist: 200,
+  },
 };
 
 export class Enemy {
@@ -115,6 +124,39 @@ export class Enemy {
           kind: "tung",
         }));
         this.fireTimer = this.def.fireInterval + Math.random() * 0.5;
+      }
+    } else if (this.def.emo) {
+      // Emo tung — medium-distance melancholy shuffle + heartbreak fan of tears.
+      const pref = this.def.preferredDist;
+      const dir = dist > pref + 20 ? 1 : dist < pref - 60 ? -1 : 0;
+      // drift sideways a little so they don't clump
+      const perp = this.wobble * 0.5;
+      const sx = -dy / dist, sy = dx / dist;
+      this.vx = (dx / dist) * this.speed * dir + sx * Math.sin(perp) * 30;
+      this.vy = (dy / dist) * this.speed * dir + sy * Math.sin(perp) * 30;
+      this.x += this.vx * dt;
+      this.y += this.vy * dt;
+
+      this.fireTimer -= dt;
+      if (this.fireTimer <= 0 && dist < pref + 180) {
+        const baseA = Math.atan2(dy, dx);
+        const spd = 175;
+        for (let i = -1; i <= 1; i++) {
+          const a = baseA + i * 0.22;
+          game.enemyProjectiles.push(new Projectile({
+            x: this.x, y: this.y - 4,
+            vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+            dmg: this.dmg * 0.75,
+            radius: 8,
+            life: 2.4,
+            color: "#ff3ea5",
+            trailColor: "#c89cff",
+            friendly: false,
+            kind: "tear",
+            spin: 0,
+          }));
+        }
+        this.fireTimer = this.def.fireInterval + Math.random() * 0.6;
       }
     } else {
       // Melee seek
