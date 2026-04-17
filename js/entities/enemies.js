@@ -50,6 +50,17 @@ export const ENEMY_TYPES = {
     fireInterval: 2.4,
     preferredDist: 200,
   },
+  duo: {
+    name: "evil duo",
+    hp: 70, speed: 0, radius: 20, dmg: 14, xp: 6,
+    // Duolingo-green body, fiery-red eyes, orange beak
+    color: "#58cc02", dark: "#2b6605", tint: "#ff4d1a",
+    bob: 0, faceScale: 1,
+    duo: true,
+    teleportInterval: 2.6,
+    fanInterval: 0.55,      // delay between teleport snap and fan shot
+    preferredDist: 200,
+  },
 };
 
 export class Enemy {
@@ -75,6 +86,10 @@ export class Enemy {
     this.stun = 0;
     this.angry = Math.random() * 0.4;
     this.hitCooldown = 0;  // prevent multi-hit on same frame from single arc
+    // Duo teleport state (only used when def.duo)
+    this.tpCharge = 0;   // >0 = telegraphing / fading out
+    this.tpArrive = 0;   // >0 = just arrived (brief anim)
+    this.fireDelay = 0;  // >0 = counting down to fan shot
   }
 
   update(dt, game) {
@@ -124,6 +139,51 @@ export class Enemy {
           kind: "tung",
         }));
         this.fireTimer = this.def.fireInterval + Math.random() * 0.5;
+      }
+    } else if (this.def.duo) {
+      // Evil Duo — teleports near the player, then fans streak fire at them.
+      if (this.tpCharge > 0) {
+        // fading out, no movement
+        this.tpCharge -= dt;
+        if (this.tpCharge <= 0) {
+          // Snap to a spot at preferredDist from player at a random angle
+          const pang = Math.random() * Math.PI * 2;
+          this.x = player.x + Math.cos(pang) * this.def.preferredDist;
+          this.y = player.y + Math.sin(pang) * this.def.preferredDist;
+          this.tpArrive = 0.25;
+          this.fireDelay = this.def.fanInterval;
+        }
+      } else if (this.tpArrive > 0) {
+        this.tpArrive -= dt;
+      } else if (this.fireDelay > 0) {
+        this.fireDelay -= dt;
+        if (this.fireDelay <= 0) {
+          // Recompute aim toward current player position.
+          const adx = player.x - this.x, ady = player.y - this.y;
+          const baseA = Math.atan2(ady, adx);
+          const count = 5;
+          const spread = 0.75;
+          for (let i = 0; i < count; i++) {
+            const f = count === 1 ? 0 : i / (count - 1) - 0.5;
+            const a = baseA + f * spread;
+            game.enemyProjectiles.push(new Projectile({
+              x: this.x, y: this.y - 6,
+              vx: Math.cos(a) * 235, vy: Math.sin(a) * 235,
+              dmg: this.dmg * 0.7,
+              radius: 9,
+              life: 2.2,
+              color: "#ff4d1a",
+              trailColor: "#ffe55c",
+              friendly: false,
+              kind: "streak",
+              spin: 6,
+            }));
+          }
+          this.fireTimer = this.def.teleportInterval + (Math.random() - 0.5) * 0.6;
+        }
+      } else {
+        this.fireTimer -= dt;
+        if (this.fireTimer <= 0) this.tpCharge = 0.4;
       }
     } else if (this.def.emo) {
       // Emo tung — medium-distance melancholy shuffle + heartbreak fan of tears.

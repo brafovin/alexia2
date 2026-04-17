@@ -277,6 +277,7 @@ function drawWeaponIcon(ctx, girl, t) {
 // ----- Evil Tung Tung sprite -----
 export function drawTungTung(ctx, e, t, opts = {}) {
   if (e.def && e.def.emo) { drawEmoTungTung(ctx, e, t, opts); return; }
+  if (e.def && e.def.duo) { drawEvilDuo(ctx, e, t, opts); return; }
   const d = e.def || {};
   const r = e.radius || 16;
   const bob = Math.sin(t * 6 + e.wobble) * (d.bob || 4);
@@ -552,6 +553,179 @@ function drawEmoTungTung(ctx, e, t, opts = {}) {
   }
 }
 
+// ----- Evil Duo sprite (menacing Duolingo owl) -----
+function drawEvilDuo(ctx, e, t, opts = {}) {
+  const r = e.radius;
+  const d = e.def;
+
+  // Telegraph alpha: fade out while charging teleport, fade in on arrival.
+  let alpha = 1;
+  if (e.tpCharge > 0) alpha = Math.max(0.1, e.tpCharge / 0.4);
+  else if (e.tpArrive > 0) alpha = 1 - (e.tpArrive / 0.25);
+
+  ctx.save();
+  ctx.translate(e.x, e.y);
+  ctx.globalAlpha = alpha;
+
+  // Shadow
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.beginPath();
+  ctx.ellipse(0, r + 6, r * 0.9, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Fiery aura
+  const pulse = 0.5 + 0.5 * Math.sin(t * 5 + e.wobble);
+  const auraGrad = ctx.createRadialGradient(0, 0, r, 0, 0, r + 18);
+  auraGrad.addColorStop(0, "rgba(255, 77, 26, 0.45)");
+  auraGrad.addColorStop(1, "rgba(255, 77, 26, 0)");
+  ctx.fillStyle = auraGrad;
+  ctx.beginPath();
+  ctx.arc(0, 0, r + 14 + pulse * 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Little flames licking up from the sides
+  ctx.fillStyle = "#ff9b3a";
+  for (let i = 0; i < 5; i++) {
+    const fx = -r + i * (r * 2 / 4);
+    const fh = 6 + Math.sin(t * 10 + i) * 3;
+    ctx.beginPath();
+    ctx.moveTo(fx, -r * 0.7);
+    ctx.lineTo(fx + 3, -r * 0.7 - fh);
+    ctx.lineTo(fx + 6, -r * 0.7);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Body: rounded oval, Duolingo green
+  ctx.fillStyle = d.color;
+  ctx.strokeStyle = d.dark;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, r, r * 1.05, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Belly lighter patch
+  ctx.fillStyle = "#e7ffc2";
+  ctx.beginPath();
+  ctx.ellipse(0, r * 0.35, r * 0.55, r * 0.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Wings folded on sides
+  ctx.fillStyle = d.dark;
+  ctx.beginPath();
+  ctx.ellipse(-r * 0.85, r * 0.1, r * 0.3, r * 0.55, -0.3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(r * 0.85, r * 0.1, r * 0.3, r * 0.55, 0.3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Angry V brows
+  ctx.fillStyle = "#1b0a00";
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.9, -r * 0.5);
+  ctx.lineTo(-r * 0.1, -r * 0.1);
+  ctx.lineTo(-r * 0.1, -r * 0.35);
+  ctx.lineTo(-r * 0.7, -r * 0.65);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(r * 0.9, -r * 0.5);
+  ctx.lineTo(r * 0.1, -r * 0.1);
+  ctx.lineTo(r * 0.1, -r * 0.35);
+  ctx.lineTo(r * 0.7, -r * 0.65);
+  ctx.closePath();
+  ctx.fill();
+
+  // Big googly eyes
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(-r * 0.38, -r * 0.1, r * 0.32, 0, Math.PI * 2);
+  ctx.arc(r * 0.38, -r * 0.1, r * 0.32, 0, Math.PI * 2);
+  ctx.fill();
+  // glowing red pupils
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = d.tint;
+  ctx.fillStyle = d.tint;
+  ctx.beginPath();
+  ctx.arc(-r * 0.38, -r * 0.05, r * 0.16, 0, Math.PI * 2);
+  ctx.arc(r * 0.38, -r * 0.05, r * 0.16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#000";
+  ctx.beginPath();
+  ctx.arc(-r * 0.38, -r * 0.05, r * 0.08, 0, Math.PI * 2);
+  ctx.arc(r * 0.38, -r * 0.05, r * 0.08, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Beak
+  ctx.fillStyle = "#ff8a1a";
+  ctx.strokeStyle = "#8a3d00";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.22, r * 0.18);
+  ctx.lineTo(r * 0.22, r * 0.18);
+  ctx.lineTo(0, r * 0.55);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Feet
+  ctx.fillStyle = "#ff8a1a";
+  for (let i = -1; i <= 1; i += 2) {
+    ctx.beginPath();
+    ctx.moveTo(i * r * 0.35, r);
+    ctx.lineTo(i * r * 0.3, r + 6);
+    ctx.lineTo(i * r * 0.5, r + 6);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Tiny red notification badge
+  ctx.fillStyle = "#ff2b2b";
+  ctx.beginPath();
+  ctx.arc(r * 0.8, -r * 0.8, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 7px Trebuchet MS";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("!", r * 0.8, -r * 0.8 + 0.5);
+
+  // Flash on damage
+  if (e.flash > 0) {
+    ctx.globalAlpha = Math.min(1, e.flash * 6) * alpha;
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, r, r * 1.05, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+
+  // Telegraph ring during teleport-out phase
+  if (e.tpCharge > 0) {
+    const k = 1 - e.tpCharge / 0.4;
+    ctx.save();
+    ctx.globalAlpha = 0.7 * (1 - k);
+    ctx.strokeStyle = "#ff4d1a";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, r + 6 + k * 20, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // HP bar (Duos are elite, always show)
+  if (e.hp < e.maxHp) {
+    const bw = 38, bh = 3;
+    ctx.fillStyle = "rgba(0,0,0,0.65)";
+    ctx.fillRect(e.x - bw / 2, e.y - r - 14, bw, bh);
+    ctx.fillStyle = "#58cc02";
+    ctx.fillRect(e.x - bw / 2, e.y - r - 14, bw * (e.hp / e.maxHp), bh);
+  }
+}
+
 // ----- Boss sprite (Tung Tung Supreme) -----
 export function drawBoss(ctx, boss, t) {
   ctx.save();
@@ -699,6 +873,29 @@ export function drawProjectile(ctx, p, t) {
     ctx.lineWidth = 2;
     ctx.strokeText("TUNG", 0, 0);
     ctx.fillText("TUNG", 0, 0);
+  } else if (p.kind === "streak") {
+    const vang = Math.atan2(p.vy, p.vx) - Math.PI / 2;
+    ctx.rotate(vang);
+    const flick = 1 + 0.25 * Math.sin(t * 28 + p.x);
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "#ff4d1a";
+    // outer flame
+    ctx.fillStyle = "#ff4d1a";
+    ctx.beginPath();
+    ctx.moveTo(0, -p.radius * 1.6 * flick);
+    ctx.bezierCurveTo(p.radius * 1.1, -p.radius * 0.3, p.radius * 0.8, p.radius, 0, p.radius);
+    ctx.bezierCurveTo(-p.radius * 0.8, p.radius, -p.radius * 1.1, -p.radius * 0.3, 0, -p.radius * 1.6 * flick);
+    ctx.closePath();
+    ctx.fill();
+    // inner flame (yellow)
+    ctx.fillStyle = "#ffe55c";
+    ctx.beginPath();
+    ctx.moveTo(0, -p.radius * 1.1 * flick);
+    ctx.bezierCurveTo(p.radius * 0.6, -p.radius * 0.2, p.radius * 0.45, p.radius * 0.6, 0, p.radius * 0.7);
+    ctx.bezierCurveTo(-p.radius * 0.45, p.radius * 0.6, -p.radius * 0.6, -p.radius * 0.2, 0, -p.radius * 1.1 * flick);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
   } else if (p.kind === "tear") {
     // Orient point-up against velocity direction so tears look like tears.
     const vang = Math.atan2(p.vy, p.vx) - Math.PI / 2;

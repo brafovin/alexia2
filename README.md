@@ -54,6 +54,10 @@ attack, cooldown, and ultimate. Play the matchup.
 - **Emo Tung** — dark charcoal log with a swoopy side-bang and a cracked
   heart pendant. Keeps medium distance, sighs a 3-tear heartbreak fan at
   you, and bursts into a radial tear ring on death. Debuts on wave 3.
+- **Evil Duo** — green owl with fiery red eyes and a red `!` notification
+  badge. Doesn't walk — teleports to a spot near you every ~2.6s (brief
+  shimmer telegraph) and then fans 5 streak-flame projectiles your way.
+  Rare elite; debuts on wave 4. Punishing if ignored.
 - **Mallet King** — mini-boss on waves 5 & 10.
 - **Tung Tung Supreme** — final boss on wave 15, three phases.
 
