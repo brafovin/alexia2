@@ -27,7 +27,7 @@ Any other static server works too (`npx serve`, `caddy file-server`, etc.).
 | Attack | left-click (hold to auto-attack) |
 | Dodge roll | `Space` |
 | Ultimate | `Shift` |
-| Swap scene girl | `1` / `2` / `3` / `4`, or `Q` / `E` |
+| Swap character | `1` – `8`, or `Q` / `E` |
 | Level-up pick | `1` / `2` / `3` (or click card) |
 | Pause | `P` |
 | Mute | `M` |
@@ -45,8 +45,20 @@ Any other static server works too (`npx serve`, `caddy file-server`, etc.).
   feather-crest, red streak in the side bang, notification-badge pupils,
   orange beak. Throws 3-card flashcard spreads that pierce. Ultimate:
   streak storm — 24-flame radial burst.
+- **Daron** — blond mullet, eyeliner drip, lip ring, studded wristbands.
+  Rips sound-wave riffs that fire music-note projectiles at medium range.
+  Ultimate: mosh pit — three expanding shockwave rings around the player.
+- **Chad** — chiseled jaw, broad shoulders, dark swept hair, stoic smirk.
+  Pure melee — heavy punches in a tight arc, high knockback. Ultimate:
+  alpha aura — huge 360° AoE pulse.
+- **Shrek** — green swamp ogre, trumpet ears, peasant vest. Lobs onion
+  bombs that burst on impact for splash damage. Ultimate: swamp slam —
+  giant shockwave plus 12 onion fragments radial.
+- **Doge** — shiba inu hero, cream belly, curly tail. Flings comic-sans
+  word projectiles ("wow", "such", "much"). Ultimate: much bark — 20-word
+  radial storm. Very speed.
 
-Swap mid-run — all four share one HP/XP pool, but each has a distinct
+Swap mid-run — all eight share one HP/XP pool, but each has a distinct
 attack, cooldown, and ultimate. Play the matchup.
 
 ## The enemies

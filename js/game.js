@@ -74,6 +74,7 @@ export class Game {
     this.updateTrail(dt);
     this.updateWave(dt);
     this.handleCollisions();
+    this.spawnOnionBursts();
 
     // Cleanup dead
     this.enemies = this.enemies.filter(e => e.alive);
@@ -115,6 +116,10 @@ export class Game {
       else if (justPressed("2")) target = 1;
       else if (justPressed("3")) target = 2;
       else if (justPressed("4")) target = 3;
+      else if (justPressed("5")) target = 4;
+      else if (justPressed("6")) target = 5;
+      else if (justPressed("7")) target = 6;
+      else if (justPressed("8")) target = 7;
       else if (justPressed("q")) target = (p.girlIndex + GIRLS.length - 1) % GIRLS.length;
       else if (justPressed("e")) target = (p.girlIndex + 1) % GIRLS.length;
       if (target >= 0 && p.setGirl(target)) {
@@ -162,9 +167,10 @@ export class Game {
     if (wantAttack && p.attackCd <= 0) {
       p.attackCd = p.girl.atkCooldown / p.stats.atkSpeed;
       p.girl.weapon(p, this, input.mouseX, input.mouseY);
-      if (p.girl.id === 0) sfx.swing();
-      else if (p.girl.id === 1) sfx.shoot();
-      else sfx.spread();
+      const gid = p.girl.id;
+      if (gid === 0 || gid === 5) sfx.swing();    // raven / chad — melee
+      else if (gid === 1) sfx.shoot();            // scarlet — scissors
+      else sfx.spread();                          // spread / burst weapons
     }
 
     // Ultimate
@@ -273,6 +279,28 @@ export class Game {
     for (const p of this.enemyProjectiles) {
       if (p.x < -pad || p.x > this.width + pad || p.y < -pad || p.y > this.height + pad) p.alive = false;
     }
+  }
+
+  // Onion projectiles burst into an AoE shockwave when they die (hit or expire).
+  spawnOnionBursts() {
+    const bursts = [];
+    for (const a of this.playerAttacks) {
+      if (a instanceof Projectile && a.kind === "onion"
+          && !a.alive && !a.burst && a.burstDmg > 0) {
+        a.burst = true;
+        bursts.push(new MeleeArc({
+          x: a.x, y: a.y,
+          angle: 0,
+          arc: Math.PI * 2,
+          radius: a.burstRadius,
+          dmg: a.burstDmg,
+          life: 0.3,
+          color: "#7aa84d",
+          knockback: 220,
+        }));
+      }
+    }
+    for (const b of bursts) this.playerAttacks.push(b);
   }
 
   updatePickups(dt) {

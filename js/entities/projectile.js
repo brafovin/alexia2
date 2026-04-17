@@ -3,7 +3,8 @@
 export class Projectile {
   constructor({ x, y, vx, vy, dmg, life = 1.2, radius = 6,
                 color = "#3ef0ff", trailColor = null, friendly = true,
-                pierce = 0, knockback = 0, spin = 0, kind = "glitter" }) {
+                pierce = 0, knockback = 0, spin = 0, kind = "glitter",
+                glyph = null, burstDmg = 0, burstRadius = 0 }) {
     this.x = x; this.y = y;
     this.vx = vx; this.vy = vy;
     this.dmg = dmg;
@@ -19,7 +20,11 @@ export class Projectile {
     this.alive = true;
     this.spin = spin;
     this.rot = Math.random() * Math.PI * 2;
-    this.kind = kind;              // "glitter" | "scissor" | "bat" | "tung" | "heart"
+    this.kind = kind;              // "glitter" | "scissor" | "tung" | "flashcard" | "streak" | "tear" | "note" | "onion" | "doge"
+    this.glyph = glyph;
+    this.burstDmg = burstDmg;
+    this.burstRadius = burstRadius;
+    this.burst = false;            // game sets true to trigger onion-burst on death
   }
 
   update(dt) {

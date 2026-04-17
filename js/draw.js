@@ -74,7 +74,11 @@ export function drawBackground(ctx, W, H, t) {
 
 // ----- Scene girl sprite -----
 export function drawSceneGirl(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
-  if (girl.owl) { drawSceneOwl(ctx, x, y, girl, facing, t, opts); return; }
+  if (girl.owl)     { drawSceneOwl(ctx, x, y, girl, facing, t, opts); return; }
+  if (girl.emoGuy)  { drawEmoGuy(ctx, x, y, girl, facing, t, opts);   return; }
+  if (girl.chad)    { drawChad(ctx, x, y, girl, facing, t, opts);     return; }
+  if (girl.shrek)   { drawShrek(ctx, x, y, girl, facing, t, opts);    return; }
+  if (girl.doge)    { drawDoge(ctx, x, y, girl, facing, t, opts);     return; }
   const flash = opts.flash || 0;
   const iframes = opts.iframes || 0;
   const bob = Math.sin(t * 6) * 1.4;
@@ -222,6 +226,10 @@ function drawPupil(ctx, x, y, kind) {
     ctx.moveTo(0, 1.6);
     ctx.bezierCurveTo(2, 0, 2.2, -2, 0, -1.2);
     ctx.bezierCurveTo(-2.2, -2, -2, 0, 0, 1.6);
+    ctx.fill();
+  } else if (kind === "dot") {
+    ctx.beginPath();
+    ctx.arc(0, 0, 1.4, 0, Math.PI * 2);
     ctx.fill();
   } else if (kind === "star") {
     ctx.beginPath();
@@ -415,6 +423,610 @@ function drawSceneOwl(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
     ctx.fillRect(-16, -28, 32, 52);
   }
 
+  ctx.restore();
+}
+
+// ----- Daron: blond-mullet emo dude -----
+function drawEmoGuy(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
+  const flash = opts.flash || 0;
+  const iframes = opts.iframes || 0;
+  const bob = Math.sin(t * 5.5) * 1.4;
+  const flipX = Math.cos(facing) < 0 ? -1 : 1;
+
+  ctx.save();
+  ctx.translate(x, y + bob);
+  if (iframes > 0 && Math.floor(iframes * 20) % 2 === 0) ctx.globalAlpha = 0.4;
+
+  // shadow
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(0, 22, 16, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.scale(flipX, 1);
+
+  // skinny jeans
+  ctx.fillStyle = "#14101c";
+  ctx.fillRect(-7, 10, 5, 13);
+  ctx.fillRect(2, 10, 5, 13);
+  // chain dangling from belt
+  ctx.strokeStyle = "#c9c9d8";
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 4; i++) {
+    ctx.beginPath();
+    ctx.arc(-5 + i * 0.3, 13 + i * 2, 1.1, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  // converse-ish shoes
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(-8, 22, 6, 4);
+  ctx.fillRect(2, 22, 6, 4);
+  ctx.fillStyle = "#1a0e1e";
+  ctx.fillRect(-8, 25, 6, 1);
+  ctx.fillRect(2, 25, 6, 1);
+
+  // band-t body
+  ctx.fillStyle = girl.shirt;
+  ctx.beginPath();
+  ctx.moveTo(-11, -2);
+  ctx.lineTo(-10, 12);
+  ctx.lineTo(10, 12);
+  ctx.lineTo(11, -2);
+  ctx.closePath();
+  ctx.fill();
+  // stripe across chest
+  ctx.fillStyle = girl.stripe;
+  ctx.fillRect(-10, 3, 20, 2);
+  // crude band logo
+  ctx.fillStyle = "#ff3ea5";
+  ctx.font = "bold 7px Trebuchet MS";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("XOXO", 0, -5);
+
+  // wristband
+  ctx.fillStyle = "#0a0410";
+  ctx.fillRect(-13, 4, 4, 4);
+  ctx.fillRect(9, 4, 4, 4);
+  ctx.strokeStyle = girl.stripe;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(-13, 4, 4, 4);
+  ctx.strokeRect(9, 4, 4, 4);
+
+  // neck + head
+  ctx.fillStyle = "#ffe0d6";
+  ctx.fillRect(-3, -6, 6, 4);
+  ctx.beginPath();
+  ctx.arc(0, -12, 11, 0, Math.PI * 2);
+  ctx.fill();
+
+  // HAIR — blond mullet: short front + side swoop + long back
+  // long hair tail behind shoulders
+  ctx.fillStyle = girl.hairColor;
+  ctx.beginPath();
+  ctx.moveTo(-11, -6);
+  ctx.lineTo(-14, 10);
+  ctx.lineTo(-6, 12);
+  ctx.lineTo(-4, -2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(11, -6);
+  ctx.lineTo(14, 10);
+  ctx.lineTo(6, 12);
+  ctx.lineTo(4, -2);
+  ctx.closePath();
+  ctx.fill();
+  // top crown (shorter than scene-girl teased)
+  ctx.beginPath();
+  ctx.moveTo(-12, -8);
+  ctx.lineTo(-10, -20);
+  ctx.lineTo(-3, -16);
+  ctx.lineTo(0, -22);
+  ctx.lineTo(4, -16);
+  ctx.lineTo(10, -20);
+  ctx.lineTo(12, -8);
+  ctx.closePath();
+  ctx.fill();
+  // darker underlayer (lowlights)
+  ctx.fillStyle = girl.hairDark;
+  ctx.fillRect(-10, -4, 3, 14);
+  ctx.fillRect(7, -4, 3, 14);
+  // side swoop over right eye
+  ctx.fillStyle = girl.hairColor;
+  ctx.beginPath();
+  ctx.moveTo(-12, -14);
+  ctx.bezierCurveTo(-6, -18, 4, -12, 6, -6);
+  ctx.lineTo(-4, -6);
+  ctx.lineTo(-11, -8);
+  ctx.closePath();
+  ctx.fill();
+  // dark streak through swoop
+  ctx.fillStyle = girl.hairStreak;
+  ctx.fillRect(-3, -14, 2, 8);
+
+  // eyes — one visible, thick eyeliner
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(4, -11, 2.6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = girl.pupilColor;
+  drawPupil(ctx, 4, -11, girl.pupil);
+  // eyeliner
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(1.4, -11); ctx.lineTo(6.6, -11);
+  ctx.stroke();
+  // eyeliner drip
+  ctx.beginPath();
+  ctx.moveTo(4, -8.5); ctx.lineTo(4.2, -5.5);
+  ctx.stroke();
+
+  // lip ring
+  ctx.strokeStyle = "#c9c9d8";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(-3, -5, 1.3, 0, Math.PI * 2);
+  ctx.stroke();
+  // slight smirk
+  ctx.strokeStyle = "#8a1c4a";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(-2, -6); ctx.lineTo(2, -5);
+  ctx.stroke();
+
+  // guitar peek over shoulder
+  ctx.save();
+  ctx.translate(9, -2);
+  ctx.rotate(-0.5 + Math.sin(t * 5) * 0.06);
+  ctx.fillStyle = "#3a2414";
+  ctx.fillRect(-2, -3, 14, 6);
+  ctx.fillStyle = girl.stripe;
+  ctx.fillRect(-2, -1, 14, 1);
+  ctx.fillStyle = "#fff";
+  for (let i = 0; i < 3; i++) ctx.fillRect(10 + i * 1.2, -2, 0.6, 4);
+  ctx.restore();
+
+  if (flash > 0) {
+    ctx.globalAlpha = flash;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-16, -28, 32, 52);
+  }
+  ctx.restore();
+}
+
+// ----- Chad: chiseled jawline mogger -----
+function drawChad(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
+  const flash = opts.flash || 0;
+  const iframes = opts.iframes || 0;
+  const bob = Math.sin(t * 5) * 1;
+  const flipX = Math.cos(facing) < 0 ? -1 : 1;
+
+  ctx.save();
+  ctx.translate(x, y + bob);
+  if (iframes > 0 && Math.floor(iframes * 20) % 2 === 0) ctx.globalAlpha = 0.4;
+
+  // shadow
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.beginPath();
+  ctx.ellipse(0, 22, 18, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.scale(flipX, 1);
+
+  // legs (dark pants)
+  ctx.fillStyle = "#0f0f18";
+  ctx.fillRect(-7, 12, 5, 12);
+  ctx.fillRect(2, 12, 5, 12);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(-7, 22, 5, 3);
+  ctx.fillRect(2, 22, 5, 3);
+
+  // massive trapezius / shoulders
+  ctx.fillStyle = girl.shirt;
+  ctx.beginPath();
+  ctx.moveTo(-15, 0);
+  ctx.lineTo(-13, 13);
+  ctx.lineTo(13, 13);
+  ctx.lineTo(15, 0);
+  ctx.lineTo(10, -4);
+  ctx.lineTo(-10, -4);
+  ctx.closePath();
+  ctx.fill();
+  // pec definition
+  ctx.fillStyle = girl.skin;
+  ctx.beginPath();
+  ctx.moveTo(-10, -4);
+  ctx.bezierCurveTo(-8, 3, -2, 3, 0, -2);
+  ctx.bezierCurveTo(2, 3, 8, 3, 10, -4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = girl.skinDark;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, -2); ctx.lineTo(0, 3);
+  ctx.stroke();
+
+  // arms — chunky biceps
+  ctx.fillStyle = girl.skin;
+  ctx.beginPath();
+  ctx.ellipse(-14, 4, 4, 6, -0.1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(14, 4, 4, 6, 0.1, 0, Math.PI * 2);
+  ctx.fill();
+
+  // neck (thick)
+  ctx.fillStyle = girl.skin;
+  ctx.fillRect(-4, -7, 8, 4);
+
+  // head — squared jaw
+  ctx.fillStyle = girl.skin;
+  ctx.beginPath();
+  ctx.moveTo(-10, -10);
+  ctx.lineTo(-9, -18);
+  ctx.lineTo(-4, -23);
+  ctx.lineTo(4, -23);
+  ctx.lineTo(9, -18);
+  ctx.lineTo(10, -10);
+  ctx.lineTo(8, -4);
+  ctx.lineTo(-8, -4);
+  ctx.closePath();
+  ctx.fill();
+  // jaw shadow
+  ctx.fillStyle = girl.skinDark;
+  ctx.beginPath();
+  ctx.moveTo(-10, -10); ctx.lineTo(-8, -4); ctx.lineTo(-6, -5); ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(10, -10); ctx.lineTo(8, -4); ctx.lineTo(6, -5); ctx.closePath();
+  ctx.fill();
+
+  // hair (short dark swept)
+  ctx.fillStyle = girl.hair;
+  ctx.beginPath();
+  ctx.moveTo(-9, -18);
+  ctx.lineTo(-4, -24);
+  ctx.lineTo(4, -24);
+  ctx.lineTo(9, -18);
+  ctx.lineTo(7, -14);
+  ctx.lineTo(-7, -14);
+  ctx.closePath();
+  ctx.fill();
+
+  // stoic brows
+  ctx.fillStyle = "#1a0a0a";
+  ctx.fillRect(-7, -14, 5, 1.3);
+  ctx.fillRect(2, -14, 5, 1.3);
+
+  // eyes — narrow, cool
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(-7, -12, 4, 1.6);
+  ctx.fillRect(3, -12, 4, 1.6);
+  ctx.fillStyle = girl.pupilColor;
+  ctx.fillRect(-5, -12, 1.4, 1.6);
+  ctx.fillRect(5, -12, 1.4, 1.6);
+
+  // sharp nose
+  ctx.strokeStyle = girl.skinDark;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, -10); ctx.lineTo(-1.5, -7);
+  ctx.stroke();
+
+  // smug smirk
+  ctx.strokeStyle = "#4a2010";
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.moveTo(-3, -6); ctx.quadraticCurveTo(0, -4.5, 3, -6.5);
+  ctx.stroke();
+
+  // stubble
+  ctx.fillStyle = girl.skinDark;
+  for (let i = -3; i <= 3; i++) {
+    for (let j = 0; j < 2; j++) {
+      ctx.fillRect(i * 1.4, -5 + j * 1, 0.6, 0.6);
+    }
+  }
+
+  // aura flex (subtle yellow glow pulse)
+  const pulse = 0.3 + 0.2 * Math.sin(t * 3);
+  ctx.globalAlpha *= 1;
+  ctx.strokeStyle = `rgba(255, 229, 92, ${pulse.toFixed(3)})`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(0, -4, 22, 0, Math.PI * 2);
+  ctx.stroke();
+
+  if (flash > 0) {
+    ctx.globalAlpha = flash;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-18, -28, 36, 52);
+  }
+  ctx.restore();
+}
+
+// ----- Shrek: swamp ogre -----
+function drawShrek(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
+  const flash = opts.flash || 0;
+  const iframes = opts.iframes || 0;
+  const bob = Math.sin(t * 4) * 1.6;
+  const flipX = Math.cos(facing) < 0 ? -1 : 1;
+
+  ctx.save();
+  ctx.translate(x, y + bob);
+  if (iframes > 0 && Math.floor(iframes * 20) % 2 === 0) ctx.globalAlpha = 0.4;
+
+  // shadow
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.beginPath();
+  ctx.ellipse(0, 22, 18, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.scale(flipX, 1);
+
+  // legs
+  ctx.fillStyle = girl.skinDark;
+  ctx.fillRect(-8, 10, 6, 14);
+  ctx.fillRect(2, 10, 6, 14);
+  ctx.fillStyle = "#2a1308";
+  ctx.fillRect(-9, 22, 8, 4);
+  ctx.fillRect(1, 22, 8, 4);
+
+  // big belly / body in peasant vest
+  ctx.fillStyle = girl.shirt;
+  ctx.beginPath();
+  ctx.moveTo(-14, -2);
+  ctx.bezierCurveTo(-16, 10, -10, 14, 0, 14);
+  ctx.bezierCurveTo(10, 14, 16, 10, 14, -2);
+  ctx.lineTo(10, -4);
+  ctx.lineTo(-10, -4);
+  ctx.closePath();
+  ctx.fill();
+  // belly skin peeking out
+  ctx.fillStyle = girl.belly;
+  ctx.beginPath();
+  ctx.ellipse(0, 8, 6, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // vest stripe
+  ctx.fillStyle = girl.stripe;
+  ctx.fillRect(-14, 0, 28, 2);
+
+  // thick green arms
+  ctx.fillStyle = girl.skin;
+  ctx.beginPath();
+  ctx.ellipse(-15, 4, 4, 6, -0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(15, 4, 4, 6, 0.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // HEAD — big green bald dome
+  ctx.fillStyle = girl.skin;
+  ctx.beginPath();
+  ctx.ellipse(0, -12, 13, 12, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // forehead shadow
+  ctx.fillStyle = girl.skinDark;
+  ctx.beginPath();
+  ctx.ellipse(0, -6, 12, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // trumpet ears (iconic)
+  ctx.fillStyle = girl.skin;
+  ctx.strokeStyle = girl.skinDark;
+  ctx.lineWidth = 1;
+  // left ear
+  ctx.beginPath();
+  ctx.moveTo(-12, -12);
+  ctx.lineTo(-22, -14);
+  ctx.lineTo(-20, -10);
+  ctx.lineTo(-12, -8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  // right ear
+  ctx.beginPath();
+  ctx.moveTo(12, -12);
+  ctx.lineTo(22, -14);
+  ctx.lineTo(20, -10);
+  ctx.lineTo(12, -8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // brows
+  ctx.fillStyle = "#2a3a1a";
+  ctx.fillRect(-7, -16, 5, 1.6);
+  ctx.fillRect(2, -16, 5, 1.6);
+
+  // eyes
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(-4, -13, 2.6, 0, Math.PI * 2);
+  ctx.arc(4, -13, 2.6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = girl.pupilColor;
+  drawPupil(ctx, -4, -13, girl.pupil);
+  drawPupil(ctx, 4, -13, girl.pupil);
+
+  // wide grin
+  ctx.fillStyle = "#3a1f10";
+  ctx.beginPath();
+  ctx.moveTo(-6, -6);
+  ctx.quadraticCurveTo(0, -2, 6, -6);
+  ctx.quadraticCurveTo(0, -4, -6, -6);
+  ctx.fill();
+  // teeth
+  ctx.fillStyle = "#fff2d0";
+  ctx.fillRect(-2, -6, 1.4, 1.4);
+  ctx.fillRect(0.6, -6, 1.4, 1.4);
+
+  // onion held
+  ctx.save();
+  ctx.translate(11, 4);
+  ctx.rotate(Math.sin(t * 3) * 0.1);
+  ctx.fillStyle = "#d4f0a6";
+  ctx.beginPath();
+  ctx.arc(0, 0, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#6a8f34";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, 0, 4, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, -4); ctx.lineTo(-2, -7); ctx.lineTo(2, -7);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  if (flash > 0) {
+    ctx.globalAlpha = flash;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-18, -30, 36, 56);
+  }
+  ctx.restore();
+}
+
+// ----- Doge: shiba inu hero -----
+function drawDoge(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
+  const flash = opts.flash || 0;
+  const iframes = opts.iframes || 0;
+  const bob = Math.sin(t * 6.5) * 1.5;
+  const flipX = Math.cos(facing) < 0 ? -1 : 1;
+
+  ctx.save();
+  ctx.translate(x, y + bob);
+  if (iframes > 0 && Math.floor(iframes * 20) % 2 === 0) ctx.globalAlpha = 0.4;
+
+  // shadow
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(0, 22, 16, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.scale(flipX, 1);
+
+  // hind legs
+  ctx.fillStyle = girl.fur;
+  ctx.fillRect(-8, 10, 5, 13);
+  ctx.fillRect(3, 10, 5, 13);
+  ctx.fillStyle = girl.furDark;
+  ctx.fillRect(-8, 21, 5, 3);
+  ctx.fillRect(3, 21, 5, 3);
+
+  // body — shiba torso
+  ctx.fillStyle = girl.fur;
+  ctx.beginPath();
+  ctx.ellipse(0, 4, 12, 11, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // cream belly
+  ctx.fillStyle = girl.belly;
+  ctx.beginPath();
+  ctx.ellipse(0, 8, 7, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // curly tail
+  ctx.strokeStyle = girl.fur;
+  ctx.lineWidth = 6;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(-10, 0);
+  ctx.quadraticCurveTo(-17, -4, -14, -10);
+  ctx.stroke();
+  ctx.strokeStyle = girl.belly;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-11, -1);
+  ctx.quadraticCurveTo(-16, -4, -13.5, -9);
+  ctx.stroke();
+
+  // HEAD — shiba face
+  ctx.fillStyle = girl.fur;
+  ctx.beginPath();
+  ctx.arc(0, -10, 11, 0, Math.PI * 2);
+  ctx.fill();
+  // cream muzzle/cheeks
+  ctx.fillStyle = girl.belly;
+  ctx.beginPath();
+  ctx.arc(0, -6, 7, 0, Math.PI * 2);
+  ctx.fill();
+  // cheek fluff
+  ctx.fillStyle = girl.fur;
+  ctx.beginPath();
+  ctx.moveTo(-11, -8); ctx.lineTo(-7, -5); ctx.lineTo(-11, -3); ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(11, -8); ctx.lineTo(7, -5); ctx.lineTo(11, -3); ctx.closePath();
+  ctx.fill();
+
+  // pointy ears
+  ctx.fillStyle = girl.fur;
+  ctx.beginPath();
+  ctx.moveTo(-10, -18); ctx.lineTo(-5, -22); ctx.lineTo(-4, -15); ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(10, -18); ctx.lineTo(5, -22); ctx.lineTo(4, -15); ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = "#3a1f10";
+  ctx.beginPath();
+  ctx.moveTo(-8, -18); ctx.lineTo(-5.5, -20); ctx.lineTo(-5, -16); ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(8, -18); ctx.lineTo(5.5, -20); ctx.lineTo(5, -16); ctx.closePath();
+  ctx.fill();
+
+  // brows (judging)
+  ctx.fillStyle = girl.furDark;
+  ctx.fillRect(-6, -14, 3, 1.2);
+  ctx.fillRect(3, -14, 3, 1.2);
+
+  // eyes — tiny side-glance
+  ctx.fillStyle = "#0a0a10";
+  ctx.beginPath();
+  ctx.arc(-4, -11, 1.6, 0, Math.PI * 2);
+  ctx.arc(4, -11, 1.6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(-3.4, -11.4, 0.6, 0, Math.PI * 2);
+  ctx.arc(4.6, -11.4, 0.6, 0, Math.PI * 2);
+  ctx.fill();
+
+  // nose
+  ctx.fillStyle = "#1a0a0a";
+  ctx.beginPath();
+  ctx.moveTo(0, -7); ctx.lineTo(-1.8, -5); ctx.lineTo(1.8, -5); ctx.closePath();
+  ctx.fill();
+
+  // tiny mouth
+  ctx.strokeStyle = "#1a0a0a";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(0, -4); ctx.quadraticCurveTo(-2, -2, -3, -3);
+  ctx.moveTo(0, -4); ctx.quadraticCurveTo(2, -2, 3, -3);
+  ctx.stroke();
+
+  // floating comic-sans "wow"
+  ctx.save();
+  ctx.rotate(-0.15);
+  ctx.fillStyle = "#ffe55c";
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  ctx.font = "bold 8px \"Comic Sans MS\", Trebuchet MS";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.strokeText("wow", -12, -22);
+  ctx.fillText("wow", -12, -22);
+  ctx.restore();
+
+  if (flash > 0) {
+    ctx.globalAlpha = flash;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-16, -28, 32, 52);
+  }
   ctx.restore();
 }
 
@@ -1099,6 +1711,69 @@ export function drawProjectile(ctx, p, t) {
     ctx.closePath();
     ctx.fill();
     ctx.shadowBlur = 0;
+  } else if (p.kind === "note") {
+    // Daron's music-note riff — glyph with a little sound-wave glow
+    const vang = Math.atan2(p.vy, p.vx);
+    ctx.rotate(vang + Math.sin(t * 10) * 0.1);
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = p.color;
+    // sound ring
+    ctx.strokeStyle = "rgba(62, 240, 255, 0.35)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(0, 0, p.radius * 1.3, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    // glyph
+    ctx.fillStyle = p.color;
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.font = "bold 18px Trebuchet MS";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.strokeText(p.glyph || "♪", 0, 0);
+    ctx.fillText(p.glyph || "♪", 0, 0);
+  } else if (p.kind === "onion") {
+    // Shrek's onion bomb — tumbling green orb with ring layers
+    ctx.rotate(p.rot);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
+    ctx.fill();
+    // onion rings
+    ctx.strokeStyle = p.trailColor;
+    ctx.lineWidth = 1;
+    for (let i = 1; i <= 3; i++) {
+      ctx.beginPath();
+      ctx.arc(0, 0, p.radius * (i / 4), 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    // sprout tip
+    ctx.fillStyle = "#2a6605";
+    ctx.beginPath();
+    ctx.moveTo(0, -p.radius);
+    ctx.lineTo(-p.radius * 0.3, -p.radius - 4);
+    ctx.lineTo(p.radius * 0.3, -p.radius - 4);
+    ctx.closePath();
+    ctx.fill();
+  } else if (p.kind === "doge") {
+    // Doge word projectile — comic-sans glyph on a soft cloud
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = p.color;
+    ctx.fillStyle = "rgba(255, 241, 214, 0.85)";
+    ctx.beginPath();
+    ctx.arc(0, 0, p.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = p.color;
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    ctx.font = "bold 11px \"Comic Sans MS\", Trebuchet MS";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const word = p.glyph || "wow";
+    ctx.strokeText(word, 0, 1);
+    ctx.fillText(word, 0, 1);
   } else if (p.kind === "tear") {
     // Orient point-up against velocity direction so tears look like tears.
     const vang = Math.atan2(p.vy, p.vx) - Math.PI / 2;

@@ -192,6 +192,218 @@ export const GIRLS = [
       }
     },
   },
+  {
+    id: 4,
+    name: "daron",
+    emoGuy: true,
+    hairColor: "#f6d870",      // blond mullet
+    hairDark: "#a88b1e",
+    hairStreak: "#1a0e1e",
+    shirt: "#0a0410",
+    stripe: "#ff3ea5",
+    pupil: "x",
+    pupilColor: "#000000",
+    baseSpeed: 178,
+    atkCooldown: 0.38,
+    desc: "blond mullet. eyeliner. rips sound-wave riffs at midrange.",
+    weapon(player, game, tx, ty) {
+      const dx = tx - player.x, dy = ty - player.y;
+      const ang = Math.atan2(dy, dx);
+      const base = 10 * player.stats.damage;
+      const notes = 3 + Math.max(0, player.stats.projectiles - 1);
+      const spread = 0.45;
+      const glyphs = ["♪", "♫", "♩", "♬"];
+      for (let i = 0; i < notes; i++) {
+        const f = notes === 1 ? 0 : i / (notes - 1) - 0.5;
+        const a = ang + f * spread;
+        const spd = 520 + (Math.abs(f) * 30);
+        game.playerAttacks.push(new Projectile({
+          x: player.x, y: player.y,
+          vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+          dmg: base, radius: 9, life: 0.85,
+          color: "#ff3ea5", trailColor: "#3ef0ff",
+          friendly: true,
+          pierce: 1 + player.stats.pierce,
+          spin: 6,
+          kind: "note",
+          glyph: glyphs[i % glyphs.length],
+        }));
+      }
+    },
+    ult(player, game) {
+      // Mosh pit — three expanding shockwave rings around the player.
+      const dmg = 18 * player.stats.damage;
+      for (let i = 0; i < 3; i++) {
+        game.playerAttacks.push(new MeleeArc({
+          x: player.x, y: player.y,
+          angle: 0,
+          arc: Math.PI * 2,
+          radius: 90 + i * 55,
+          dmg,
+          life: 0.25 + i * 0.12,
+          color: i === 0 ? "#ff3ea5" : (i === 1 ? "#c89cff" : "#3ef0ff"),
+          knockback: 260,
+        }));
+      }
+    },
+  },
+  {
+    id: 5,
+    name: "chad",
+    chad: true,
+    skin: "#e8c08a",
+    skinDark: "#a07040",
+    hair: "#3a2414",
+    shirt: "#1a1a24",
+    pupil: "dot",
+    pupilColor: "#1a0a0a",
+    baseSpeed: 158,
+    atkCooldown: 0.52,
+    desc: "jacked jawline. chad punches up close. big alpha aura ult.",
+    weapon(player, game, tx, ty) {
+      const dx = tx - player.x, dy = ty - player.y;
+      const ang = Math.atan2(dy, dx);
+      const dmg = 26 * player.stats.damage;
+      game.playerAttacks.push(new MeleeArc({
+        x: player.x, y: player.y,
+        angle: ang,
+        arc: Math.PI * 0.55,
+        radius: 80 + player.stats.range * 12,
+        dmg,
+        life: 0.2,
+        color: "#ffe55c",
+        knockback: 340,
+      }));
+    },
+    ult(player, game) {
+      // Alpha aura — huge 360 AoE pulse
+      game.playerAttacks.push(new MeleeArc({
+        x: player.x, y: player.y,
+        angle: 0,
+        arc: Math.PI * 2,
+        radius: 200,
+        dmg: 40 * player.stats.damage,
+        life: 0.35,
+        color: "#ffe55c",
+        knockback: 420,
+      }));
+    },
+  },
+  {
+    id: 6,
+    name: "shrek",
+    shrek: true,
+    skin: "#7aa84d",
+    skinDark: "#3f5e22",
+    belly: "#a7c97a",
+    shirt: "#8a5a2b",
+    stripe: "#d4a06a",
+    pupil: "dot",
+    pupilColor: "#1a0a0a",
+    baseSpeed: 150,
+    atkCooldown: 0.7,
+    desc: "swamp ogre. lobs onion bombs that burst on impact.",
+    weapon(player, game, tx, ty) {
+      const dx = tx - player.x, dy = ty - player.y;
+      const ang = Math.atan2(dy, dx);
+      const dmg = 16 * player.stats.damage;
+      // Big slow onion bomb; on first hit/lifeout it bursts (game handles via kind "onion")
+      game.playerAttacks.push(new Projectile({
+        x: player.x, y: player.y,
+        vx: Math.cos(ang) * 340, vy: Math.sin(ang) * 340,
+        dmg, radius: 13, life: 0.85,
+        color: "#7aa84d", trailColor: "#d4a06a",
+        friendly: true,
+        pierce: 0 + player.stats.pierce,
+        spin: 5,
+        kind: "onion",
+        burstDmg: dmg * 0.8,
+        burstRadius: 90,
+      }));
+    },
+    ult(player, game) {
+      // Swamp slam — expanding green shockwave
+      game.playerAttacks.push(new MeleeArc({
+        x: player.x, y: player.y,
+        angle: 0,
+        arc: Math.PI * 2,
+        radius: 220,
+        dmg: 34 * player.stats.damage,
+        life: 0.5,
+        color: "#7aa84d",
+        knockback: 460,
+      }));
+      // plus 12 onion fragments
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        game.playerAttacks.push(new Projectile({
+          x: player.x, y: player.y,
+          vx: Math.cos(a) * 380, vy: Math.sin(a) * 380,
+          dmg: 16 * player.stats.damage, radius: 10, life: 0.7,
+          color: "#7aa84d", trailColor: "#d4a06a",
+          friendly: true, pierce: 2,
+          spin: 10, kind: "onion",
+        }));
+      }
+    },
+  },
+  {
+    id: 7,
+    name: "doge",
+    doge: true,
+    fur: "#d7a867",
+    furDark: "#8d6a32",
+    belly: "#fff1d6",
+    shirt: "#d7a867",
+    stripe: "#ffffff",
+    pupil: "dot",
+    pupilColor: "#1a0a0a",
+    baseSpeed: 200,
+    atkCooldown: 0.36,
+    desc: "such shiba. flings comic-sans words. much damage. very speed.",
+    weapon(player, game, tx, ty) {
+      const dx = tx - player.x, dy = ty - player.y;
+      const ang = Math.atan2(dy, dx);
+      const base = 9 * player.stats.damage;
+      const count = 2 + Math.max(0, player.stats.projectiles - 1);
+      const words = ["wow", "such", "much", "very", "so"];
+      const spread = 0.28;
+      for (let i = 0; i < count; i++) {
+        const f = count === 1 ? 0 : i / (count - 1) - 0.5;
+        const a = ang + f * spread;
+        game.playerAttacks.push(new Projectile({
+          x: player.x, y: player.y,
+          vx: Math.cos(a) * 540, vy: Math.sin(a) * 540,
+          dmg: base, radius: 11, life: 0.8,
+          color: "#ffe55c", trailColor: "#d7a867",
+          friendly: true,
+          pierce: 1 + player.stats.pierce,
+          spin: 0,
+          kind: "doge",
+          glyph: words[(Math.random() * words.length) | 0],
+        }));
+      }
+    },
+    ult(player, game) {
+      // much bark — radial word storm
+      const n = 20;
+      const dmg = 11 * player.stats.damage;
+      const words = ["wow", "such", "bark", "many", "very", "so"];
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2;
+        game.playerAttacks.push(new Projectile({
+          x: player.x, y: player.y,
+          vx: Math.cos(a) * 420, vy: Math.sin(a) * 420,
+          dmg, radius: 11, life: 0.8,
+          color: i % 2 ? "#ffe55c" : "#3ef0ff",
+          trailColor: "#d7a867",
+          friendly: true, pierce: 3,
+          kind: "doge",
+          glyph: words[i % words.length],
+        }));
+      }
+    },
+  },
 ];
 
 export class Player {
