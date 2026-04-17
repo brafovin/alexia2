@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Evil Tung Tung Sahur :: Scene Girl Nightmare at 3AM</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="frame">
+    <canvas id="stage" width="960" height="600"></canvas>
+    <div id="scanlines" aria-hidden="true"></div>
+
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+      <div class="hud-row top">
+        <div class="hud-block">
+          <div class="hud-label">hp</div>
+          <div class="bar hp"><div class="fill" id="hp-fill"></div></div>
+        </div>
+        <div class="hud-block">
+          <div class="hud-label">xp</div>
+          <div class="bar xp"><div class="fill" id="xp-fill"></div></div>
+          <div class="lvl" id="lvl">lv 1</div>
+        </div>
+        <div class="hud-block">
+          <div class="hud-label">wave</div>
+          <div id="wave-num">1</div>
+          <div class="wave-timer"><div class="fill" id="wave-fill"></div></div>
+        </div>
+        <div class="hud-block clock">
+          <div class="hud-label">time</div>
+          <div id="clock">3:00 AM</div>
+          <div id="kills">0 banished</div>
+        </div>
+      </div>
+
+      <div class="hud-row bottom">
+        <div class="roster" id="roster">
+          <button class="girl-chip" data-girl="0">
+            <span class="tag">1</span><span class="name">raven</span>
+          </button>
+          <button class="girl-chip" data-girl="1">
+            <span class="tag">2</span><span class="name">scarlet</span>
+          </button>
+          <button class="girl-chip" data-girl="2">
+            <span class="tag">3</span><span class="name">violet</span>
+          </button>
+        </div>
+        <div class="cooldowns">
+          <div class="cd" id="cd-dodge"><span>dodge</span><em></em></div>
+          <div class="cd" id="cd-ult"><span>ult</span><em></em></div>
+          <div class="cd" id="cd-swap"><span>swap</span><em></em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Title screen -->
+    <div id="title" class="overlay">
+      <div class="title-glow">evil tung tung sahur</div>
+      <div class="subtitle">:: scene girl nightmare at 3 a m ::</div>
+      <p class="blurb">
+        it is 3 am. the logs are walking. pick a scene girl and banish the
+        evil tung tung sahur before sunrise.
+      </p>
+      <div class="picker" id="picker"></div>
+      <button id="start-btn" class="big-btn">start the chaos</button>
+      <div class="controls-hint">
+        wasd move · mouse aim · click attack · space dodge · shift ultimate
+        <br />1/2/3 or q/e swap girl · p pause · m mute
+      </div>
+      <div class="hiscore" id="hiscore-title"></div>
+    </div>
+
+    <!-- Level up overlay -->
+    <div id="levelup" class="overlay hidden">
+      <div class="levelup-title">lv up &lt;3</div>
+      <div class="levelup-sub">pick one (mwah)</div>
+      <div class="upgrade-cards" id="upgrade-cards"></div>
+    </div>
+
+    <!-- Pause overlay -->
+    <div id="pause" class="overlay hidden">
+      <div class="title-glow small">paused</div>
+      <div class="subtitle">press p to resume</div>
+    </div>
+
+    <!-- Death screen -->
+    <div id="death" class="overlay hidden">
+      <div class="title-glow small">banished at 3 a m</div>
+      <div class="stats" id="death-stats"></div>
+      <div class="hiscore" id="hiscore-death"></div>
+      <button id="restart-btn" class="big-btn">try again</button>
+      <button id="title-btn" class="big-btn ghost">back to title</button>
+    </div>
+
+    <!-- Victory screen -->
+    <div id="victory" class="overlay hidden">
+      <div class="title-glow small">sunrise &lt;3</div>
+      <div class="subtitle">the evil tung tung has been banished</div>
+      <div class="stats" id="victory-stats"></div>
+      <button id="victory-btn" class="big-btn">again!</button>
+    </div>
+
+    <!-- Toast (for swap, mute, etc) -->
+    <div id="toast"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
