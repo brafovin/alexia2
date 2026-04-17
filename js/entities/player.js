@@ -133,6 +133,65 @@ export const GIRLS = [
       }
     },
   },
+  {
+    id: 3,
+    name: "duo",
+    owl: true,
+    bodyColor: "#58cc02",
+    bodyDark: "#2b6605",
+    belly: "#e7ffc2",
+    beak: "#ff8a1a",
+    hairColor: "#2b6605",
+    hairStreak: "#ff2b2b",
+    shirt: "#58cc02",
+    stripe: "#ff2b2b",
+    pupil: "notif",
+    pupilColor: "#ff4d1a",
+    baseSpeed: 180,
+    atkCooldown: 0.42,
+    desc: "duolingo drop-out. throws flashcards. streak-fire ultimate.",
+    weapon(player, game, tx, ty) {
+      const dx = tx - player.x, dy = ty - player.y;
+      const ang = Math.atan2(dy, dx);
+      const base = 11 * player.stats.damage;
+      const cards = 3 + Math.max(0, player.stats.projectiles - 1);
+      const spread = 0.34;
+      const letters = ["A", "B", "C", "¡", "ñ", "¿", "!"];
+      for (let i = 0; i < cards; i++) {
+        const f = cards === 1 ? 0 : i / (cards - 1) - 0.5;
+        const a = ang + f * spread;
+        const spd = 500;
+        game.playerAttacks.push(new Projectile({
+          x: player.x, y: player.y,
+          vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+          dmg: base, radius: 9, life: 0.9,
+          color: "#ffffff", trailColor: "#58cc02",
+          friendly: true,
+          pierce: 1 + player.stats.pierce,
+          spin: 10,
+          kind: "flashcard",
+          glyph: letters[(i + ((Math.random() * 7) | 0)) % letters.length],
+        }));
+      }
+    },
+    ult(player, game) {
+      // Streak storm — radial burst of streak-flames
+      const n = 24;
+      const dmg = 13 * player.stats.damage;
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2;
+        game.playerAttacks.push(new Projectile({
+          x: player.x, y: player.y,
+          vx: Math.cos(a) * 400, vy: Math.sin(a) * 400,
+          dmg, radius: 10, life: 0.85,
+          color: "#ff4d1a", trailColor: "#ffe55c",
+          friendly: true,
+          pierce: 4,
+          kind: "streak",
+        }));
+      }
+    },
+  },
 ];
 
 export class Player {

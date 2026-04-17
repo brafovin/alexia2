@@ -173,6 +173,7 @@ html, body {
 .girl-chip[data-girl="0"] { border-color: #7ae3ff; }
 .girl-chip[data-girl="1"] { border-color: #ff7ab6; }
 .girl-chip[data-girl="2"] { border-color: #c89cff; }
+.girl-chip[data-girl="3"] { border-color: #58cc02; }
 
 /* Cooldowns */
 .cooldowns {

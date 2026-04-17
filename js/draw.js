@@ -74,6 +74,7 @@ export function drawBackground(ctx, W, H, t) {
 
 // ----- Scene girl sprite -----
 export function drawSceneGirl(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
+  if (girl.owl) { drawSceneOwl(ctx, x, y, girl, facing, t, opts); return; }
   const flash = opts.flash || 0;
   const iframes = opts.iframes || 0;
   const bob = Math.sin(t * 6) * 1.4;
@@ -201,7 +202,15 @@ export function drawSceneGirl(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
 function drawPupil(ctx, x, y, kind) {
   ctx.save();
   ctx.translate(x, y);
-  if (kind === "x") {
+  if (kind === "notif") {
+    // red badge with a tiny "!"
+    ctx.beginPath();
+    ctx.arc(0, 0, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-0.3, -1.2, 0.6, 1.6);
+    ctx.fillRect(-0.3, 0.5, 0.6, 0.6);
+  } else if (kind === "x") {
     ctx.strokeStyle = ctx.fillStyle;
     ctx.lineWidth = 1.4;
     ctx.beginPath();
@@ -229,6 +238,183 @@ function drawPupil(ctx, x, y, kind) {
     ctx.arc(0, 0, 1.6, 0, Math.PI * 2);
     ctx.fill();
   }
+  ctx.restore();
+}
+
+// Scene-girl Duo — owl body with scene-girl hair/bang overlay and fishnet legs.
+function drawSceneOwl(ctx, x, y, girl, facing = 0, t = 0, opts = {}) {
+  const flash = opts.flash || 0;
+  const iframes = opts.iframes || 0;
+  const bob = Math.sin(t * 5.5) * 1.6;
+  const flipX = Math.cos(facing) < 0 ? -1 : 1;
+
+  ctx.save();
+  ctx.translate(x, y + bob);
+  if (iframes > 0 && Math.floor(iframes * 20) % 2 === 0) ctx.globalAlpha = 0.4;
+
+  // shadow
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath();
+  ctx.ellipse(0, 22, 15, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.scale(flipX, 1);
+
+  // fishnet leg stripes + striped stockings
+  ctx.strokeStyle = girl.stripe;
+  ctx.lineWidth = 1;
+  for (let i = -1; i <= 1; i += 2) {
+    ctx.beginPath();
+    ctx.moveTo(i * 3, 12);
+    ctx.lineTo(i * 4, 22);
+    ctx.stroke();
+  }
+  // orange feet
+  ctx.fillStyle = girl.beak;
+  ctx.beginPath();
+  ctx.moveTo(-6, 22); ctx.lineTo(-3, 26); ctx.lineTo(-8, 26); ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(6, 22); ctx.lineTo(3, 26); ctx.lineTo(8, 26); ctx.closePath(); ctx.fill();
+
+  // round owl body
+  ctx.fillStyle = girl.bodyColor;
+  ctx.strokeStyle = girl.bodyDark;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.ellipse(0, 4, 13, 14, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  // belly
+  ctx.fillStyle = girl.belly;
+  ctx.beginPath();
+  ctx.ellipse(0, 8, 7, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // tiny folded wings
+  ctx.fillStyle = girl.bodyDark;
+  ctx.beginPath();
+  ctx.ellipse(-11, 4, 3.5, 7, -0.3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(11, 4, 3.5, 7, 0.3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // striped arm-warmer accents (over top of wings)
+  ctx.fillStyle = girl.stripe;
+  ctx.fillRect(-13, 1, 2, 8);
+  ctx.fillRect(11, 1, 2, 8);
+  ctx.fillStyle = "#1a0e1e";
+  for (let i = 0; i < 3; i++) {
+    ctx.fillRect(-13, 2 + i * 3, 2, 1);
+    ctx.fillRect(11, 2 + i * 3, 2, 1);
+  }
+
+  // HEAD (bigger than body in scene proportions)
+  // Teased feather-crest on top (scene-hair polygon in dark green)
+  ctx.fillStyle = girl.hairColor;
+  ctx.beginPath();
+  ctx.moveTo(-13, -9);
+  ctx.lineTo(-17, -20);
+  ctx.lineTo(-9, -17);
+  ctx.lineTo(-13, -27);
+  ctx.lineTo(-3, -20);
+  ctx.lineTo(0, -28);
+  ctx.lineTo(4, -20);
+  ctx.lineTo(12, -27);
+  ctx.lineTo(9, -17);
+  ctx.lineTo(17, -20);
+  ctx.lineTo(13, -9);
+  ctx.closePath();
+  ctx.fill();
+
+  // head (green circle)
+  ctx.fillStyle = girl.bodyColor;
+  ctx.strokeStyle = girl.bodyDark;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ctx.arc(0, -10, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // side bang over eye (dark green with red streak)
+  ctx.fillStyle = girl.hairColor;
+  ctx.beginPath();
+  ctx.moveTo(-11, -14);
+  ctx.lineTo(5, -6);
+  ctx.lineTo(-5, -6);
+  ctx.lineTo(-11, -4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = girl.hairStreak;
+  ctx.fillRect(-2, -22, 2, 8);
+  ctx.fillRect(-8, -18, 2, 6);
+
+  // angry V-brows on visible side
+  ctx.fillStyle = "#1b0a00";
+  ctx.beginPath();
+  ctx.moveTo(0, -14); ctx.lineTo(7, -12); ctx.lineTo(7, -11); ctx.lineTo(1, -12); ctx.closePath();
+  ctx.fill();
+
+  // eyes — one big white owl eye visible (other under bang)
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(4, -10, 3.4, 0, Math.PI * 2);
+  ctx.fill();
+  // pupil
+  ctx.fillStyle = girl.pupilColor;
+  drawPupil(ctx, 4, -10, girl.pupil);
+
+  // hint of covered eye glowing under bang
+  ctx.fillStyle = "rgba(255, 77, 26, 0.45)";
+  ctx.beginPath();
+  ctx.arc(-4, -9, 1.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // beak
+  ctx.fillStyle = girl.beak;
+  ctx.strokeStyle = "#8a3d00";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-2, -5);
+  ctx.lineTo(2, -5);
+  ctx.lineTo(0, -1);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // notification badge over shoulder
+  ctx.fillStyle = "#ff2b2b";
+  ctx.beginPath();
+  ctx.arc(10, -18, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 6px Trebuchet MS";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("!", 10, -17.5);
+
+  // weapon peek (flashcard)
+  ctx.save();
+  ctx.translate(12, -2);
+  ctx.rotate(-0.4 + Math.sin(t * 5) * 0.06);
+  ctx.fillStyle = "#ffffff";
+  ctx.strokeStyle = "#2b6605";
+  ctx.lineWidth = 1;
+  ctx.fillRect(0, -3, 8, 6);
+  ctx.strokeRect(0, -3, 8, 6);
+  ctx.fillStyle = girl.stripe;
+  ctx.font = "bold 6px Trebuchet MS";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("A", 4, 0);
+  ctx.restore();
+
+  if (flash > 0) {
+    ctx.globalAlpha = flash;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-16, -28, 32, 52);
+  }
+
   ctx.restore();
 }
 
@@ -873,6 +1059,23 @@ export function drawProjectile(ctx, p, t) {
     ctx.lineWidth = 2;
     ctx.strokeText("TUNG", 0, 0);
     ctx.fillText("TUNG", 0, 0);
+  } else if (p.kind === "flashcard") {
+    ctx.rotate(p.rot);
+    const w = p.radius * 1.6, h = p.radius * 1.1;
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#2b6605";
+    ctx.lineWidth = 2;
+    ctx.fillRect(-w, -h, w * 2, h * 2);
+    ctx.strokeRect(-w, -h, w * 2, h * 2);
+    // little corner tab
+    ctx.fillStyle = "#58cc02";
+    ctx.fillRect(-w, -h, 4, 4);
+    // letter
+    ctx.fillStyle = "#1b0a00";
+    ctx.font = "bold 11px Trebuchet MS";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(p.glyph || "A", 0, 1);
   } else if (p.kind === "streak") {
     const vang = Math.atan2(p.vy, p.vx) - Math.PI / 2;
     ctx.rotate(vang);

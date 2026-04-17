@@ -27,7 +27,7 @@ Any other static server works too (`npx serve`, `caddy file-server`, etc.).
 | Attack | left-click (hold to auto-attack) |
 | Dodge roll | `Space` |
 | Ultimate | `Shift` |
-| Swap scene girl | `1` / `2` / `3`, or `Q` / `E` |
+| Swap scene girl | `1` / `2` / `3` / `4`, or `Q` / `E` |
 | Level-up pick | `1` / `2` / `3` (or click card) |
 | Pause | `P` |
 | Mute | `M` |
@@ -41,8 +41,12 @@ Any other static server works too (`npx serve`, `caddy file-server`, etc.).
   ranged. Ultimate: blade rain.
 - **Violet** — purple-pink mohawk, glitter shotgun. 5-pellet spread.
   Ultimate: glitter nova.
+- **Duo** — duolingo drop-out gone scene: owl body with teased green
+  feather-crest, red streak in the side bang, notification-badge pupils,
+  orange beak. Throws 3-card flashcard spreads that pierce. Ultimate:
+  streak storm — 24-flame radial burst.
 
-Swap mid-run — all three share one HP/XP pool, but each has a distinct
+Swap mid-run — all four share one HP/XP pool, but each has a distinct
 attack, cooldown, and ultimate. Play the matchup.
 
 ## The enemies

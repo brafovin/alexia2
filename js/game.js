@@ -114,7 +114,8 @@ export class Game {
       if (justPressed("1")) target = 0;
       else if (justPressed("2")) target = 1;
       else if (justPressed("3")) target = 2;
-      else if (justPressed("q")) target = (p.girlIndex + 2) % GIRLS.length;
+      else if (justPressed("4")) target = 3;
+      else if (justPressed("q")) target = (p.girlIndex + GIRLS.length - 1) % GIRLS.length;
       else if (justPressed("e")) target = (p.girlIndex + 1) % GIRLS.length;
       if (target >= 0 && p.setGirl(target)) {
         p.swapCd = p.swapMax * p.stats.swapCdMul;
